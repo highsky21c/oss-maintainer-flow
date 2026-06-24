@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .health import render_health_report
 from .release_notes import PullRequest, render_release_notes
 from .triage import Issue, render_triage_report, suggest_issue
 
@@ -46,6 +47,12 @@ def run_release_notes(args: argparse.Namespace) -> None:
     print(render_release_notes(pulls, args.version), end="")
 
 
+def run_health(args: argparse.Namespace) -> None:
+    issues = [build_issue(item) for item in load_json(args.issues)]
+    pulls = [build_pull_request(item) for item in load_json(args.pulls)]
+    print(render_health_report(issues, pulls), end="")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="oss-maintainer-flow")
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -58,6 +65,11 @@ def build_parser() -> argparse.ArgumentParser:
     release_notes.add_argument("input", type=Path)
     release_notes.add_argument("--version", required=True)
     release_notes.set_defaults(func=run_release_notes)
+
+    health = subcommands.add_parser("health", help="Report maintainer workflow health from issue and PR JSON.")
+    health.add_argument("issues", type=Path)
+    health.add_argument("pulls", type=Path)
+    health.set_defaults(func=run_health)
 
     return parser
 
