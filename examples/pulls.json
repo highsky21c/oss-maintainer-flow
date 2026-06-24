@@ -1,0 +1,23 @@
+[
+  {
+    "number": 31,
+    "title": "Add JSON export command",
+    "author": "highsky21c",
+    "labels": ["feature"],
+    "merged_at": "2026-06-24T00:00:00Z"
+  },
+  {
+    "number": 32,
+    "title": "Fix traceback on missing config",
+    "author": "highsky21c",
+    "labels": ["bug"],
+    "merged_at": "2026-06-24T00:00:00Z"
+  },
+  {
+    "number": 33,
+    "title": "Document maintainer review workflow",
+    "author": "highsky21c",
+    "labels": ["documentation"],
+    "merged_at": "2026-06-24T00:00:00Z"
+  }
+]

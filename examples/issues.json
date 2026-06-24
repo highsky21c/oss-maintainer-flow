@@ -1,0 +1,20 @@
+[
+  {
+    "number": 12,
+    "title": "Crash when config file is missing",
+    "body": "The CLI exits with a traceback if config.yaml is absent.",
+    "labels": []
+  },
+  {
+    "number": 18,
+    "title": "Potential token leak in debug logs",
+    "body": "Debug output appears to include credentials when verbose mode is enabled.",
+    "labels": []
+  },
+  {
+    "number": 21,
+    "title": "Improve README with install instructions",
+    "body": "The docs should show pipx and editable install examples.",
+    "labels": []
+  }
+]
