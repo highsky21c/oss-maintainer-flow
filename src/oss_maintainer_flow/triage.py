@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass(frozen=True)
@@ -19,11 +21,25 @@ class TriageSuggestion:
     rationale: tuple[str, ...]
 
 
-RULES: tuple[tuple[str, tuple[str, ...], str], ...] = (
-    ("bug", ("crash", "traceback", "exception", "broken", "error", "fails"), "bug"),
-    ("documentation", ("docs", "documentation", "readme", "tutorial"), "documentation"),
-    ("enhancement", ("feature", "support", "add", "improve"), "enhancement"),
-    ("question", ("how do i", "how to", "question", "help"), "question"),
+@dataclass(frozen=True)
+class TriageRule:
+    label: str
+    terms: tuple[str, ...]
+    rationale: str
+
+
+@dataclass(frozen=True)
+class TriageConfig:
+    rules: tuple[TriageRule, ...]
+    security_terms: tuple[str, ...]
+    security_label: str = "security-review"
+
+
+RULES: tuple[TriageRule, ...] = (
+    TriageRule("bug", ("crash", "traceback", "exception", "broken", "error", "fails"), "bug"),
+    TriageRule("documentation", ("docs", "documentation", "readme", "tutorial"), "documentation"),
+    TriageRule("enhancement", ("feature", "support", "add", "improve"), "enhancement"),
+    TriageRule("question", ("how do i", "how to", "question", "help"), "question"),
 )
 
 SECURITY_TERMS = (
@@ -38,23 +54,52 @@ SECURITY_TERMS = (
     "credential",
 )
 
+DEFAULT_CONFIG = TriageConfig(RULES, SECURITY_TERMS)
 
-def suggest_issue(issue: Issue) -> TriageSuggestion:
+
+def config_from_dict(data: dict) -> TriageConfig:
+    custom_rules: list[TriageRule] = []
+    for item in data.get("rules", []):
+        label = str(item["label"]).strip()
+        terms = tuple(str(term).lower() for term in item.get("terms", []))
+        rationale = str(item.get("rationale", label)).strip()
+        if label and terms:
+            custom_rules.append(TriageRule(label, terms, rationale))
+
+    custom_security_terms = tuple(str(term).lower() for term in data.get("security_terms", []))
+    security_label = str(data.get("security_label", DEFAULT_CONFIG.security_label)).strip()
+
+    return TriageConfig(
+        rules=(*DEFAULT_CONFIG.rules, *custom_rules),
+        security_terms=(*DEFAULT_CONFIG.security_terms, *custom_security_terms),
+        security_label=security_label or DEFAULT_CONFIG.security_label,
+    )
+
+
+def load_triage_config(path: Path) -> TriageConfig:
+    with path.open("r", encoding="utf-8") as file:
+        data = json.load(file)
+    if not isinstance(data, dict):
+        raise SystemExit("Triage config JSON must be an object.")
+    return config_from_dict(data)
+
+
+def suggest_issue(issue: Issue, config: TriageConfig = DEFAULT_CONFIG) -> TriageSuggestion:
     text = f"{issue.title}\n{issue.body}".lower()
     existing = {label.lower() for label in issue.labels}
     labels: list[str] = []
     rationale: list[str] = []
 
-    for label, terms, reason in RULES:
-        if label in existing:
+    for rule in config.rules:
+        if rule.label.lower() in existing:
             continue
-        if any(term in text for term in terms):
-            labels.append(label)
-            rationale.append(f"Matched {reason} language in the issue text.")
+        if any(term in text for term in rule.terms):
+            labels.append(rule.label)
+            rationale.append(f"Matched {rule.rationale} language in the issue text.")
 
-    security_review = any(term in text for term in SECURITY_TERMS)
-    if security_review and "security" not in existing:
-        labels.append("security-review")
+    security_review = any(term in text for term in config.security_terms)
+    if security_review and config.security_label.lower() not in existing:
+        labels.append(config.security_label)
         rationale.append("Contains security-sensitive language and should be reviewed privately.")
 
     if not labels:

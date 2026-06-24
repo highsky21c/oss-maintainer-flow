@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .health import render_health_report
 from .release_notes import PullRequest, render_release_notes
-from .triage import Issue, render_triage_report, suggest_issue
+from .triage import Issue, load_triage_config, render_triage_report, suggest_issue
 
 
 def load_json(path: Path) -> list[dict]:
@@ -38,7 +38,8 @@ def build_pull_request(item: dict) -> PullRequest:
 
 def run_triage(args: argparse.Namespace) -> None:
     issues = [build_issue(item) for item in load_json(args.input)]
-    suggestions = [suggest_issue(issue) for issue in issues]
+    config = load_triage_config(args.config) if args.config else None
+    suggestions = [suggest_issue(issue, config) if config else suggest_issue(issue) for issue in issues]
     print(render_triage_report(suggestions), end="")
 
 
@@ -59,6 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     triage = subcommands.add_parser("triage", help="Suggest labels for issue JSON.")
     triage.add_argument("input", type=Path)
+    triage.add_argument("--config", type=Path, help="Optional JSON file with project-specific triage rules.")
     triage.set_defaults(func=run_triage)
 
     release_notes = subcommands.add_parser("release-notes", help="Draft release notes from pull request JSON.")

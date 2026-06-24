@@ -1,0 +1,16 @@
+{
+  "rules": [
+    {
+      "label": "packaging",
+      "terms": ["wheel", "sdist", "pip install"],
+      "rationale": "packaging"
+    },
+    {
+      "label": "github-api",
+      "terms": ["rate limit", "graphql", "rest api", "github token"],
+      "rationale": "GitHub API"
+    }
+  ],
+  "security_terms": ["private key", "access token"],
+  "security_label": "security-review"
+}

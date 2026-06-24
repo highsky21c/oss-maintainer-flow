@@ -39,6 +39,7 @@ python -m pip install -e .
 
 ```bash
 oss-maintainer-flow triage examples/issues.json
+oss-maintainer-flow triage examples/issues.json --config examples/triage-config.json
 oss-maintainer-flow release-notes examples/pulls.json --version 0.1.0
 oss-maintainer-flow health examples/issues.json examples/pulls.json
 ```
@@ -75,6 +76,10 @@ Pull request input:
 ## Roadmap
 
 See [ROADMAP.md](ROADMAP.md) for planned milestones.
+
+## Configuration
+
+Project-specific triage rules can be added with a JSON config file. See [docs/configuration.md](docs/configuration.md).
 
 ## Maintainer principles
 
