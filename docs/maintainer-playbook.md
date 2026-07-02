@@ -21,9 +21,10 @@ This playbook describes how the repository is intended to be maintained in publi
 
 1. Verify CI is passing on `main`.
 2. Run `oss-maintainer-flow release-notes`.
-3. Review generated notes against merged pull requests.
-4. Update `CHANGELOG.md`.
-5. Tag the release and publish reviewed notes.
+3. Run `oss-maintainer-flow release-checklist`.
+4. Review generated notes against merged pull requests.
+5. Update `CHANGELOG.md`.
+6. Tag the release and publish reviewed notes.
 
 ## Security handling
 

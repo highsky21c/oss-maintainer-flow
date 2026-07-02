@@ -41,6 +41,7 @@ python -m pip install -e .
 oss-maintainer-flow triage examples/issues.json
 oss-maintainer-flow triage examples/issues.json --config examples/triage-config.json
 oss-maintainer-flow release-notes examples/pulls.json --version 0.1.0
+oss-maintainer-flow release-checklist examples/pulls.json --version 0.1.0 --changelog CHANGELOG.md
 oss-maintainer-flow health examples/issues.json examples/pulls.json
 ```
 

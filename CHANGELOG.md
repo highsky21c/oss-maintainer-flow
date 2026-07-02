@@ -7,6 +7,7 @@ All notable changes to this project are documented here.
 ### Added
 
 - Optional JSON config for project-specific triage rules and security terms.
+- Release checklist command for validating PR metadata and changelog coverage.
 
 ## 0.1.0 - 2026-06-24
 

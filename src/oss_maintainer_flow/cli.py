@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from .health import render_health_report
-from .release_notes import PullRequest, render_release_notes
+from .release_notes import PullRequest, render_release_checklist, render_release_notes
 from .triage import Issue, load_triage_config, render_triage_report, suggest_issue
 
 
@@ -48,6 +48,12 @@ def run_release_notes(args: argparse.Namespace) -> None:
     print(render_release_notes(pulls, args.version), end="")
 
 
+def run_release_checklist(args: argparse.Namespace) -> None:
+    pulls = [build_pull_request(item) for item in load_json(args.input)]
+    changelog = args.changelog.read_text(encoding="utf-8") if args.changelog else ""
+    print(render_release_checklist(pulls, args.version, changelog), end="")
+
+
 def run_health(args: argparse.Namespace) -> None:
     issues = [build_issue(item) for item in load_json(args.issues)]
     pulls = [build_pull_request(item) for item in load_json(args.pulls)]
@@ -67,6 +73,15 @@ def build_parser() -> argparse.ArgumentParser:
     release_notes.add_argument("input", type=Path)
     release_notes.add_argument("--version", required=True)
     release_notes.set_defaults(func=run_release_notes)
+
+    release_checklist = subcommands.add_parser(
+        "release-checklist",
+        help="Draft a release readiness checklist from pull request JSON.",
+    )
+    release_checklist.add_argument("input", type=Path)
+    release_checklist.add_argument("--version", required=True)
+    release_checklist.add_argument("--changelog", type=Path, help="Optional changelog file to check for PR references.")
+    release_checklist.set_defaults(func=run_release_checklist)
 
     health = subcommands.add_parser("health", help="Report maintainer workflow health from issue and PR JSON.")
     health.add_argument("issues", type=Path)
