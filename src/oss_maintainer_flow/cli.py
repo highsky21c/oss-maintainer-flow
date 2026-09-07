@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from .github_import import fetch_github_export
 from .health import render_health_report
 from .release_notes import PullRequest, render_release_checklist, render_release_notes
 from .triage import Issue, load_triage_config, render_triage_report, suggest_issue
@@ -60,6 +61,11 @@ def run_health(args: argparse.Namespace) -> None:
     print(render_health_report(issues, pulls), end="")
 
 
+def run_import_github(args: argparse.Namespace) -> None:
+    items = fetch_github_export(args.repository, args.kind, args.state, args.token)
+    print(json.dumps(items, ensure_ascii=False, indent=2), end="\n")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="oss-maintainer-flow")
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -87,6 +93,16 @@ def build_parser() -> argparse.ArgumentParser:
     health.add_argument("issues", type=Path)
     health.add_argument("pulls", type=Path)
     health.set_defaults(func=run_health)
+
+    import_github = subcommands.add_parser(
+        "import-github",
+        help="Export GitHub issues or pull requests as local JSON.",
+    )
+    import_github.add_argument("repository", help="Repository in owner/name form or a GitHub repository URL.")
+    import_github.add_argument("--kind", choices=("issues", "pulls"), required=True)
+    import_github.add_argument("--state", default="open", choices=("open", "closed", "all"))
+    import_github.add_argument("--token", help="Optional GitHub token. Defaults to GITHUB_TOKEN.")
+    import_github.set_defaults(func=run_import_github)
 
     return parser
 

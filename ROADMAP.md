@@ -12,7 +12,7 @@ This roadmap focuses on maintenance work that is visible, reviewable, and useful
 
 ## v0.2.0 - GitHub workflow import
 
-- Import open issues and merged pull requests from the GitHub API
+- Import open issues and pull requests from the GitHub API
 - Support repository-specific triage rule configuration
 - Export reports as Markdown files for maintainers to review in pull requests
 - Add fixture-based tests for GitHub API response normalization
