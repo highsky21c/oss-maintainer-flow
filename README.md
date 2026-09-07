@@ -45,6 +45,7 @@ oss-maintainer-flow release-notes examples/pulls.json --version 0.1.0
 oss-maintainer-flow release-checklist examples/pulls.json --version 0.1.0 --changelog CHANGELOG.md
 oss-maintainer-flow health examples/issues.json examples/pulls.json
 oss-maintainer-flow health examples/issues.json examples/pulls.json --output reports/health.md
+oss-maintainer-flow security-advisory examples/security-advisory.json --output reports/security-advisory.md
 ```
 
 ## Input formats
@@ -87,6 +88,8 @@ Project-specific triage rules can be added with a JSON config file. See [docs/co
 GitHub issues and pull requests can be exported into offline JSON with `import-github`. See [docs/github-import.md](docs/github-import.md).
 
 Generated reports can be written to files with `--output`. See [docs/reports.md](docs/reports.md).
+
+Security advisory drafts can be generated from local metadata. See [docs/security-advisories.md](docs/security-advisories.md).
 
 ## Maintainer principles
 

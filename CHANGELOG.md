@@ -10,6 +10,7 @@ All notable changes to this project are documented here.
 - `--output` support for writing JSON exports and Markdown reports to files.
 - Optional JSON config for project-specific triage rules and security terms.
 - Release checklist command for validating PR metadata and changelog coverage.
+- Security advisory draft command for coordinated disclosure review.
 
 ## 0.1.0 - 2026-06-24
 

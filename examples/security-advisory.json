@@ -1,0 +1,10 @@
+{
+  "title": "Token exposure in verbose logs",
+  "affected_versions": "<0.2.0",
+  "patched_versions": "0.2.0",
+  "severity": "medium",
+  "summary": "Verbose logs may include access tokens when debug output is enabled.",
+  "impact": "Local logs could disclose credentials to anyone with access to the log files.",
+  "remediation": "Upgrade to the patched release, delete affected logs, and rotate exposed tokens.",
+  "disclosure_status": "draft"
+}

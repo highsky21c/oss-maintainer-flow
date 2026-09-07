@@ -7,6 +7,7 @@ from pathlib import Path
 from .github_import import fetch_github_export
 from .health import render_health_report
 from .release_notes import PullRequest, render_release_checklist, render_release_notes
+from .security_advisory import build_advisory, render_security_advisory
 from .triage import Issue, load_triage_config, render_triage_report, suggest_issue
 
 
@@ -15,6 +16,14 @@ def load_json(path: Path) -> list[dict]:
         data = json.load(file)
     if not isinstance(data, list):
         raise SystemExit("Input JSON must be a list of objects.")
+    return data
+
+
+def load_json_object(path: Path) -> dict:
+    with path.open("r", encoding="utf-8") as file:
+        data = json.load(file)
+    if not isinstance(data, dict):
+        raise SystemExit("Input JSON must be an object.")
     return data
 
 
@@ -74,6 +83,11 @@ def run_import_github(args: argparse.Namespace) -> None:
     write_output(json.dumps(items, ensure_ascii=False, indent=2) + "\n", args.output)
 
 
+def run_security_advisory(args: argparse.Namespace) -> None:
+    advisory = build_advisory(load_json_object(args.input))
+    write_output(render_security_advisory(advisory), args.output)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="oss-maintainer-flow")
     subcommands = parser.add_subparsers(dest="command", required=True)
@@ -116,6 +130,14 @@ def build_parser() -> argparse.ArgumentParser:
     import_github.add_argument("--token", help="Optional GitHub token. Defaults to GITHUB_TOKEN.")
     import_github.add_argument("--output", type=Path, help="Optional file path for the JSON export.")
     import_github.set_defaults(func=run_import_github)
+
+    security_advisory = subcommands.add_parser(
+        "security-advisory",
+        help="Draft a reviewable security advisory from local JSON metadata.",
+    )
+    security_advisory.add_argument("input", type=Path)
+    security_advisory.add_argument("--output", type=Path, help="Optional file path for the Markdown draft.")
+    security_advisory.set_defaults(func=run_security_advisory)
 
     return parser
 

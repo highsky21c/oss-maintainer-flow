@@ -26,6 +26,12 @@ oss-maintainer-flow release-checklist examples/pulls.json --version 0.2.0 --chan
 oss-maintainer-flow health examples/issues.json examples/pulls.json --output reports/health.md
 ```
 
+## Security advisory draft
+
+```bash
+oss-maintainer-flow security-advisory examples/security-advisory.json --output reports/security-advisory.md
+```
+
 ## GitHub exports
 
 GitHub exports are JSON, but they use the same output behavior:

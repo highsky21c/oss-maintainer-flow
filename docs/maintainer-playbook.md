@@ -30,5 +30,6 @@ This playbook describes how the repository is intended to be maintained in publi
 
 1. Do not discuss unreleased vulnerabilities in public issues.
 2. Acknowledge reports by email.
-3. Prepare a private fix branch if needed.
-4. Publish an advisory or changelog note after coordinated disclosure.
+3. Draft an advisory with `oss-maintainer-flow security-advisory --output reports/security-advisory.md`.
+4. Prepare a private fix branch if needed.
+5. Publish an advisory or changelog note after coordinated disclosure.
