@@ -5,7 +5,7 @@
 ## Issues
 
 ```bash
-oss-maintainer-flow import-github highsky21c/oss-maintainer-flow --kind issues > issues.json
+oss-maintainer-flow import-github highsky21c/oss-maintainer-flow --kind issues --output issues.json
 oss-maintainer-flow triage issues.json --config examples/triage-config.json
 ```
 
@@ -14,7 +14,7 @@ The issue export excludes pull requests returned by GitHub's issues API.
 ## Pull requests
 
 ```bash
-oss-maintainer-flow import-github highsky21c/oss-maintainer-flow --kind pulls --state closed > pulls.json
+oss-maintainer-flow import-github highsky21c/oss-maintainer-flow --kind pulls --state closed --output pulls.json
 oss-maintainer-flow release-notes pulls.json --version 0.2.0
 oss-maintainer-flow release-checklist pulls.json --version 0.2.0 --changelog CHANGELOG.md
 ```

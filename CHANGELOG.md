@@ -7,6 +7,7 @@ All notable changes to this project are documented here.
 ### Added
 
 - GitHub issue and pull request import command for producing offline JSON exports.
+- `--output` support for writing JSON exports and Markdown reports to files.
 - Optional JSON config for project-specific triage rules and security terms.
 - Release checklist command for validating PR metadata and changelog coverage.
 

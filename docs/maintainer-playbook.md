@@ -5,7 +5,7 @@ This playbook describes how the repository is intended to be maintained in publi
 ## Weekly issue triage
 
 1. Export or collect new issue metadata.
-2. Run `oss-maintainer-flow triage`.
+2. Run `oss-maintainer-flow triage --output reports/triage.md`.
 3. Apply labels only after reviewing the rationale.
 4. Move security-sensitive reports to the private disclosure process.
 5. Link follow-up work to public roadmap issues when appropriate.
@@ -20,8 +20,8 @@ This playbook describes how the repository is intended to be maintained in publi
 ## Release management
 
 1. Verify CI is passing on `main`.
-2. Run `oss-maintainer-flow release-notes`.
-3. Run `oss-maintainer-flow release-checklist`.
+2. Run `oss-maintainer-flow release-notes --output reports/release-notes.md`.
+3. Run `oss-maintainer-flow release-checklist --output reports/release-checklist.md`.
 4. Review generated notes against merged pull requests.
 5. Update `CHANGELOG.md`.
 6. Tag the release and publish reviewed notes.

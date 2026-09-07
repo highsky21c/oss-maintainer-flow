@@ -18,6 +18,14 @@ def load_json(path: Path) -> list[dict]:
     return data
 
 
+def write_output(content: str, output: Path | None = None) -> None:
+    if output is None:
+        print(content, end="")
+        return
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(content, encoding="utf-8")
+
+
 def build_issue(item: dict) -> Issue:
     return Issue(
         number=int(item.get("number", 0)),
@@ -41,29 +49,29 @@ def run_triage(args: argparse.Namespace) -> None:
     issues = [build_issue(item) for item in load_json(args.input)]
     config = load_triage_config(args.config) if args.config else None
     suggestions = [suggest_issue(issue, config) if config else suggest_issue(issue) for issue in issues]
-    print(render_triage_report(suggestions), end="")
+    write_output(render_triage_report(suggestions), args.output)
 
 
 def run_release_notes(args: argparse.Namespace) -> None:
     pulls = [build_pull_request(item) for item in load_json(args.input)]
-    print(render_release_notes(pulls, args.version), end="")
+    write_output(render_release_notes(pulls, args.version), args.output)
 
 
 def run_release_checklist(args: argparse.Namespace) -> None:
     pulls = [build_pull_request(item) for item in load_json(args.input)]
     changelog = args.changelog.read_text(encoding="utf-8") if args.changelog else ""
-    print(render_release_checklist(pulls, args.version, changelog), end="")
+    write_output(render_release_checklist(pulls, args.version, changelog), args.output)
 
 
 def run_health(args: argparse.Namespace) -> None:
     issues = [build_issue(item) for item in load_json(args.issues)]
     pulls = [build_pull_request(item) for item in load_json(args.pulls)]
-    print(render_health_report(issues, pulls), end="")
+    write_output(render_health_report(issues, pulls), args.output)
 
 
 def run_import_github(args: argparse.Namespace) -> None:
     items = fetch_github_export(args.repository, args.kind, args.state, args.token)
-    print(json.dumps(items, ensure_ascii=False, indent=2), end="\n")
+    write_output(json.dumps(items, ensure_ascii=False, indent=2) + "\n", args.output)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -73,11 +81,13 @@ def build_parser() -> argparse.ArgumentParser:
     triage = subcommands.add_parser("triage", help="Suggest labels for issue JSON.")
     triage.add_argument("input", type=Path)
     triage.add_argument("--config", type=Path, help="Optional JSON file with project-specific triage rules.")
+    triage.add_argument("--output", type=Path, help="Optional file path for the Markdown report.")
     triage.set_defaults(func=run_triage)
 
     release_notes = subcommands.add_parser("release-notes", help="Draft release notes from pull request JSON.")
     release_notes.add_argument("input", type=Path)
     release_notes.add_argument("--version", required=True)
+    release_notes.add_argument("--output", type=Path, help="Optional file path for the Markdown report.")
     release_notes.set_defaults(func=run_release_notes)
 
     release_checklist = subcommands.add_parser(
@@ -87,11 +97,13 @@ def build_parser() -> argparse.ArgumentParser:
     release_checklist.add_argument("input", type=Path)
     release_checklist.add_argument("--version", required=True)
     release_checklist.add_argument("--changelog", type=Path, help="Optional changelog file to check for PR references.")
+    release_checklist.add_argument("--output", type=Path, help="Optional file path for the Markdown report.")
     release_checklist.set_defaults(func=run_release_checklist)
 
     health = subcommands.add_parser("health", help="Report maintainer workflow health from issue and PR JSON.")
     health.add_argument("issues", type=Path)
     health.add_argument("pulls", type=Path)
+    health.add_argument("--output", type=Path, help="Optional file path for the Markdown report.")
     health.set_defaults(func=run_health)
 
     import_github = subcommands.add_parser(
@@ -102,6 +114,7 @@ def build_parser() -> argparse.ArgumentParser:
     import_github.add_argument("--kind", choices=("issues", "pulls"), required=True)
     import_github.add_argument("--state", default="open", choices=("open", "closed", "all"))
     import_github.add_argument("--token", help="Optional GitHub token. Defaults to GITHUB_TOKEN.")
+    import_github.add_argument("--output", type=Path, help="Optional file path for the JSON export.")
     import_github.set_defaults(func=run_import_github)
 
     return parser

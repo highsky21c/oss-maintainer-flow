@@ -44,6 +44,7 @@ oss-maintainer-flow import-github highsky21c/oss-maintainer-flow --kind issues
 oss-maintainer-flow release-notes examples/pulls.json --version 0.1.0
 oss-maintainer-flow release-checklist examples/pulls.json --version 0.1.0 --changelog CHANGELOG.md
 oss-maintainer-flow health examples/issues.json examples/pulls.json
+oss-maintainer-flow health examples/issues.json examples/pulls.json --output reports/health.md
 ```
 
 ## Input formats
@@ -84,6 +85,8 @@ See [ROADMAP.md](ROADMAP.md) for planned milestones.
 Project-specific triage rules can be added with a JSON config file. See [docs/configuration.md](docs/configuration.md).
 
 GitHub issues and pull requests can be exported into offline JSON with `import-github`. See [docs/github-import.md](docs/github-import.md).
+
+Generated reports can be written to files with `--output`. See [docs/reports.md](docs/reports.md).
 
 ## Maintainer principles
 
